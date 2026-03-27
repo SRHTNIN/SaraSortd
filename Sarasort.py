@@ -8,6 +8,7 @@ def Clear():
     else:
         os.system('clear')
 
+
 def LoadConf():
     global Conf
 

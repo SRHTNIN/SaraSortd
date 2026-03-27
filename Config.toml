@@ -1,4 +1,39 @@
 Title = "Sarasort Config"
 
-[Folders]
-InputFolder = "Unset"
+[Symbols]
+# Symbols that are used for sorting: * & @ ~ ^ % []
+NextNum = "*" # The next available number. If 1 already exists, 2 will be used. Starts at 1.
+NextChar = "&" # The next available character. If A already exists, B will be used.
+
+Parent = "@" # The name of the parent folder.
+
+OrgFileName = "~" # The original name of the sorted file. If "blahblah.txt" gets sorted, "~" would be equal to "blahblah".
+OrgFileType = "^" # The original file type of the sorted file. If "example.png" gets sorted, "^" would be equal to ".png".
+
+TodayDayName = "[D]" # The name of the current day, E.G. "Friday".
+TodayDay = "[d]" # The date of the current day, E.G. "27".
+
+TodayMonthName = "[M]" # The name of the current month, E.G. "March".
+TodayMonth = "[m]" # The date of the current month, E.G. "03".
+
+TodayYear = "[y]" # The current year, E.G. "2026".
+
+Vars  = "%" # NOTE: If one character is given in "Vars", E.G. "%",
+# vars in the Config will be "%ExampleVar%". If two characters are given, E.G. "()",
+# vars in the config will be "(ExampleVar)".
+
+[DirectoryPaths]
+RootDir = "Unset" # 
+InputDir = "%RootDir%"
+OutputDir = "%RootDir%/Output"
+LogDir = ".%RootDir%/Logs"
+FailedDir =".%RootDir%/Failed" # For files that failed to be sorted.
+
+[Names]
+OutputDirName = "Output_#"
+OutputFileName = "*_@^"
+LogFileName = "[y].[m].[d]_*"
+DirConfName = ".@Config.toml"
+
+[Log]
+Sorted = "Sorted ~^ to %SortDir%"

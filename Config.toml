@@ -1,39 +1,39 @@
-Title = "Sarasort Config"
+Title = "SaraSortd Config"
 
-[Symbols]
-# Symbols that are used for sorting: * & @ ~ ^ % []
+[Variables] # Only use these in config files, not the actual file names themselves..
 NextNum = "*" # The next available number. If 1 already exists, 2 will be used. Starts at 1.
 NextChar = "&" # The next available character. If A already exists, B will be used.
 
-Parent = "@" # The name of the parent folder.
+Parent = "@" # The name of the parent directory.
 
 OrgFileName = "~" # The original name of the sorted file. If "blahblah.txt" gets sorted, "~" would be equal to "blahblah".
 OrgFileType = "^" # The original file type of the sorted file. If "example.png" gets sorted, "^" would be equal to ".png".
 
-TodayDayName = "[D]" # The name of the current day, E.G. "Friday".
-TodayDay = "[d]" # The date of the current day, E.G. "27".
+Year = "[y]" # The current year, E.G. "2026".
 
-TodayMonthName = "[M]" # The name of the current month, E.G. "March".
-TodayMonth = "[m]" # The date of the current month, E.G. "03".
+MonthName = "[M]" # The name of the current month, E.G. "March".
+DayName = "[D]" # The name of the current day, E.G. "Friday".
 
-TodayYear = "[y]" # The current year, E.G. "2026".
+Month = "[m]" # The date of the current month, E.G. "03".
+Day = "[d]" # The date of the current day, E.G. "27".
 
-Vars  = "%" # NOTE: If one character is given in "Vars", E.G. "%",
-# vars in the Config will be "%ExampleVar%". If two characters are given, E.G. "()",
-# vars in the config will be "(ExampleVar)".
+Hour = "[h]" # The current hour, E.G. "12".
+Minute = "[n]" # The current minute, E.G. "44".
+Second = "[s]" # The current second, E.G. "11".
+
+VarCall  = "%%" # The characters used at the start and end of variable calls. The first character is to the left; second is to the right.
 
 [DirectoryPaths]
-RootDir = "Unset" # 
+RootDir = "Unset"
 InputDir = "%RootDir%"
-OutputDir = "%RootDir%/Output"
+OutputDir = "%RootDir%"
 LogDir = ".%RootDir%/Logs"
 FailedDir =".%RootDir%/Failed" # For files that failed to be sorted.
 
 [Names]
-OutputDirName = "Output_#"
-OutputFileName = "*_@^"
-LogFileName = "[y].[m].[d]_*"
-DirConfName = ".@Config.toml"
+OutputFileName = "*_@^" # Name of sorted files.
+LogFileName = "[y].[m].[d]_*" # Name of log files.
+ConfFileName = ".@Config" # Name of config files for directories.
 
 [Log]
 Sorted = "Sorted ~^ to %SortDir%"

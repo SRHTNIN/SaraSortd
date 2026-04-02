@@ -111,26 +111,33 @@ def LogWrite(Text):
 
 
 def ConfCheck():
-    for Item in ConfVars:
-        if (Item == None or Item == "Unset"):
-            TextOutput = Parse(ConfLog["Unset"], Item)
+    for Parameter, Value in ConfVars.items():
+        if (Value == None or Value == "Unset"):
+            TextOutput = Parse(ConfLog["Unset"], Parameter)
             LogWrite(TextOutput)
             Speak(TextOutput)
             Error()
     
-    for Item in ConfDirs:
-        if (Item == None or Item == "Unset"):
-            TextOutput = Parse(ConfLog["Unset"], Item)
+    for Parameter, Value in ConfDirs.items():
+        if (Value == None or Value == "Unset"):
+            TextOutput = Parse(ConfLog["Unset"], Parameter)
             LogWrite(TextOutput)
             Speak(TextOutput)
             Error()
+    
+    for Parameter, Value in ConfNames.items():
+        if (Value == None or Value == "Unset"):
+            TextOutput = Parse(ConfLog["Unset"], Parameter)
+            LogWrite(TextOutput)
+            Speak(TextOutput)
+            Error()    
 
-    for Item in ConfLog:
-        if (Item == None or Item == "Unset"):
-            TextOutput = Parse(ConfLog["Unset"], Item)
+    for Parameter, Value in ConfLog.items():
+        if (Value == None or Value == "Unset"):
+            TextOutput = Parse(ConfLog["Unset"], Parameter)
             LogWrite(TextOutput)
             Speak(TextOutput)
-            Error()
+            Error()    
 
 
 def Init():
@@ -144,7 +151,7 @@ def Init():
             TextOutput = Parse(ConfLog["Start"])
             LogWrite(TextOutput)
             Speak(TextOutput)
-            
+
             Main()
         
         else:

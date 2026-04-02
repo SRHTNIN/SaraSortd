@@ -27,7 +27,7 @@ VarCall  = "%%" # The characters used at the start and end of variable calls. Th
 RootDir = "Unset" # Parent directory. Folder where all SaraSortd folders live.
 InputDir = ["%RootDir%"] # If files get put here, they'll be sorted.
 OutputDir = ["%RootDir%"] # Where sortted files go.
-LogDir = ".%RootDir%/Logs" # Where log files from SaraSortd go.
+LogDir = "%RootDir%/.Logs" # Where log files from SaraSortd go.
 FailedDir =".%RootDir%/Failed" # For files that failed to be sorted.
 
 [Names]

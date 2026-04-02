@@ -8,8 +8,9 @@ toml: Use ```pip install toml``` to install toml.
 
 ## Config explanation
 
-### Global config (Config.toml)
+### SaraSortd Config (Config.toml)
 
+```
 Title = "SaraSortd Config" # NOTE: Do not change the title.
 
 SafeMode = 1 # If SaraSortd should stop if an error with the config appears. 1 is stop, 0 is continue.
@@ -17,13 +18,13 @@ SilentMode = 0 # If SaraSortd should write stuff to the terminal as well.
 
 CheckInput = 10 # How many seconds it takes for SaraSortd to check input directories for new files to sort.
 
-[Variables] # Only use these in config files, not the actual file names themselves..
+[Variables] # Only use these in config files, not the actual file names themselves.
 NextNum = "*" # The next available number. If 1 already exists, 2 will be used. Starts at 1.
 NextChar = "&" # The next available character. If A already exists, B will be used.
 
 Parent = "@" # The name of the parent directory.
 
-OrgFileName = "~" # The original name of the sorted file. If "blahblah.txt" gets sorted, "~" would be equal to "blahblah".
+OrgFileName = "\~" # The original name of the sorted file. If "blahblah.txt" gets sorted, "~" would be equal to "blahblah".
 OrgFileType = "^" # The original file type of the sorted file. If "example.png" gets sorted, "^" would be equal to ".png".
 
 Year = "[y]" # The current year, E.G. "2026".
@@ -58,14 +59,24 @@ ValueSet = "Set: %% to be %% in %%." # When a value in a config is set.
 
 WrongType = "Error: %% is not a %%." # When a parameter in the config is of the wrong type. E.G. setting a text parameter to be a list.
 Unset = "Error: %% is not set." # When a parameter in the config is not set. %% is the parameter that wasn't set.
+```
 
-### Directory config (DirConfig.toml)
+### Directory Config (DirConfig.toml)
 
-Title = "Unset"
+```
+Title = "Unset" # NOTE: Do not change the title.
 
 Files = [
     {Pattern = "?", NewFileName = "~^", NextNum = 1, NextChar = "A"},
 ]
+# Pattern: the pattern used to sort files here. ? is a wildcard.
+# E.G: if Pattern is "?.png", all files ending with .png will end up here.
 
-LastFile = "Unset"
-ParentDir = "Unset"
+# NewFileName: the pattern for the new names of the files that get sorted here.
+
+# NextNum and Nextchar: used to keep track of the next
+# available number and character for file names.
+
+LastFile = "Unset" # The last modified file in the directory.
+ParentDir = "Unset" # The name of the parent directory.
+```

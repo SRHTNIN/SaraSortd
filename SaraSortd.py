@@ -1,4 +1,4 @@
-import toml, os, datetime
+import toml, os, datetime, re
 
 Conf = None
 ConfVars = None
@@ -37,27 +37,62 @@ def Speak(Text):
         print(Text)
 
 
+def GetConf(Parameter):
+    if Parameter in Conf:
+        return str(Conf[Parameter])
+    
+    elif Parameter in ConfVars:
+        return str(ConfVars[Parameter])
+    
+    elif Parameter in ConfDirs:
+        return str(ConfDirs[Parameter])
+    
+    elif Parameter in ConfNames:
+        return str(ConfNames[Parameter])
+    
+    elif Parameter in ConfLog:
+        return str(ConfLog[Parameter])
+    
+    return None
+
+
 def Parse(String = None, Var = None, OrgFile = None, OutputDir = None):
+    def Replacer(Match):
+        Content = Match.group(1)
+
+        if (Content == None or Content == ""):
+            if (Var != None):
+                return str(Var)
+            else:
+                return ""
+        
+        Value = GetConf(Content)
+        if (Value != None):
+            return Value
+            
+    
     Now = datetime.datetime.now()
 
-    ParseBook = {
+    VarValues = {
+        ConfVars["NextNum"]: "NOT ADDED",
+        ConfVars["NextChar"]: "NOT ADDED",
+        ConfVars["Parent"]: "NOT ADDED",
+        ConfVars["OrgFileName"]: "NOT ADDED",
+        ConfVars["OrgFileType"]: "NOT ADDED",
         ConfVars["Year"]: str(Now.year),
         ConfVars["Month"]: str(Now.month),
         ConfVars["Day"]: str(Now.day),
         ConfVars["Hour"]: str(Now.hour),
         ConfVars["Minute"]: str(Now.minute),
         ConfVars["Second"]: str(Now.second),
-        ConfVars["VarCall"]: Var,
-        ConfVars["NextNum"]: "NOT ADDED",
-        ConfVars["NextChar"]: "NOT ADDED",
-        ConfVars["Parent"]: "NOT ADDED",
-        ConfVars["OrgFileName"]: "NOT ADDED",
-        ConfVars["OrgFileType"]: "NOT ADDED",
+        ConfVars["VarCall"]: Var
     }
 
-    for Key, Value in ParseBook.items():
+    for Key, Value in VarValues.items():
         if Key in String and Value is not None:
             String = String.replace(Key, Value)
+
+    String = re.sub(r"%([^%]*)%", Replacer, String)
 
     return String
 
@@ -104,13 +139,14 @@ def Init():
     LoadConf()
     if (Conf != None):
         ConfCheck()
-        
-        TextOutput = Parse(ConfLog["Start"])
-        LogWrite(TextOutput)
-        Speak(TextOutput)
 
         if (Start):
+            TextOutput = Parse(ConfLog["Start"])
+            LogWrite(TextOutput)
+            Speak(TextOutput)
+            
             Main()
+        
         else:
             TextOutput = Parse(ConfLog["NotStart"])
             LogWrite(TextOutput)

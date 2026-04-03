@@ -242,6 +242,10 @@ def Sort(FilePath):
         Dir(Parse(String =  ConfDirs["FailedDir"]), Output = False, CopyConf = False)
         NewName = os.path.basename(FilePath)
         Clone(FilePath, Parse(String =  ConfDirs["FailedDir"]), NewName, True)
+
+        TextOutput = Parse(String = ConfLog["NotSorted"], VarCall = FilePath)
+        LogWrite(TextOutput)
+        Speak(TextOutput)
         return
 
     NewDirPath = os.path.dirname(NewPath)    

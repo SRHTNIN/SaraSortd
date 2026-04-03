@@ -1,7 +1,7 @@
 Title = "SaraSortd Config"
 SafeMode = 1
 SilentMode = 0
-CheckInput = 10
+CheckInput = 3
 DotFiles = 1
 
 [Variables]

@@ -19,14 +19,14 @@ Second = "[s]"
 VarCall = "%%"
 
 [DirectoryPaths]
-RootDir = "/home/sarah/TESTDIR"
+RootDir = "Unset"
 InputDir = [ "%RootDir%"]
 OutputDir = [ "%RootDir%/Output"]
 LogDir = "%RootDir%/.Logs"
 FailedDir = "%RootDir%/.Failed"
 
 [Names]
-LogFileName = "[y].[m].[d]._!"
+LogFileName = "[y].[m].[d]"
 DirConfName = ".@Config"
 
 [Log]

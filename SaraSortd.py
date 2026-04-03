@@ -56,40 +56,52 @@ def GetConf(Parameter, *Paths):
             if (isinstance(Value, dict)):
                 if (Parameter in Value):
                     return Value[Parameter]
+            elif (isinstance(Value, list)):
+                for Item in Value:
+                    if (isinstance(Item, dict) and Parameter in Item):
+                        return Item[Parameter]
     
     return None
 
 
 def UpdateConf(Path, Parameter, Value, Append = False):
     ConfData = toml.load(Path)
+   
+    def UpdateInData(Data):
+        if isinstance(Data, dict):
+            if Parameter in Data:
+                if (not Append):
+                    Data[Parameter] = Value
 
-    Section = None
-    for Table, Data in ConfData.items():
-        if (isinstance(Data, dict) and Parameter in Data):
-            Section = Table
-            break
-    
-    if (Section == None):
-        TargetData = ConfData
-    
-    else:
-        TargetData = ConfData[Section]
+                else:
+                    Data.setdefault(Parameter, [])
 
-    if (not Append):
-        TargetData[Parameter] = Value
-    
-    else:
-        if (Parameter not in TargetData):
-            TargetData[Parameter] = []
+                    if (Value not in Data[Parameter]):
+                        Data[Parameter].append(Value)
+
+                return True
+            else:
+                for Key, DataValue in Data.items():
+                    if (UpdateInData(DataValue)):
+                        return True
         
-        if (Value not in TargetData[Parameter]):
-            TargetData[Parameter].append(Value)
-
-    if (Section == None):
-        ConfData = TargetData
+        elif (isinstance(Data, list)):
+            for Item in Data:
+                if (UpdateInData(Item)):
+                    return True
+        
+        return False
     
-    else:
-        ConfData[Section] = TargetData
+    Updated = UpdateInData(ConfData)
+
+    if (not Updated):
+        if not Append:
+            ConfData[Parameter] = Value
+        
+        else:
+            ConfData.setdefault(Parameter, [])
+            if (Value not in ConfData[Parameter]):
+                ConfData[Parameter].append(Value)
 
     with open(Path, 'w', encoding='utf-8') as File:
         toml.dump(ConfData, File)
@@ -139,18 +151,18 @@ def Parse(String = None, Path = ConfPath,
         OrgFileType = None
 
     VarValues = {
-        ConfVars["NextNum"]: NextNum,
-        ConfVars["NextChar"]: NextChar,
-        ConfVars["Parent"]: Parent,
-        ConfVars["OrgFileName"]: OrgFileName,
-        ConfVars["OrgFileType"]: OrgFileType,
+        ConfVars["NextNum"]: str(NextNum),
+        ConfVars["NextChar"]: str(NextChar),
+        ConfVars["Parent"]: str(Parent),
+        ConfVars["OrgFileName"]: str(OrgFileName),
+        ConfVars["OrgFileType"]: str(OrgFileType),
         ConfVars["Year"]: str(Now.year),
         ConfVars["Month"]: str(Now.month),
         ConfVars["Day"]: str(Now.day),
         ConfVars["Hour"]: str(Now.hour),
         ConfVars["Minute"]: str(Now.minute),
         ConfVars["Second"]: str(Now.second),
-        ConfVars["VarCall"]: VarCall
+        ConfVars["VarCall"]: str(VarCall)
     }
 
     for Key, Value in VarValues.items():
@@ -231,7 +243,17 @@ def DecideNewPath(FilePath):
 
             if fnmatch.fnmatch(UnsortedFile, Pattern):
                 NewFileName = File["NewFileName"]
-                NewFileName = Parse(String = NewFileName, Path = DirConfPath, OrgFile = UnsortedFile)
+
+                if (ConfVars["NextNum"] in NewFileName):
+                    UpdateConf(DirConfPath, "NextNum", (int(GetConf("NextNum", DirConfPath)) + 1))
+
+                if (ConfVars["NextChar"] in NewFileName):
+                    CurrentChar = GetConf("NextChar", DirConfPath)
+                    if (CurrentChar and len(CurrentChar) == 1 and CurrentChar.isalpha()):
+                        NewChar = chr(((ord(CurrentChar.upper()) - 65 +1) % 26) +65)
+                        UpdateConf(DirConfPath, "NextChar", NewChar)
+
+                NewFileName = Parse(String = NewFileName, Path = DirConfPath, OrgFile = UnsortedFile, NextNum = File["NextNum"], NextChar = File["NextChar"], Parent = ParentName)
                 return f"{Output}/{NewFileName}"
 
 
@@ -249,11 +271,7 @@ def Sort(FilePath):
         return
 
     NewDirPath = os.path.dirname(NewPath)    
-
-    NextNum = GetConf("NextNum", f"{NewDirPath}/{Parse(String = ConfNames["DirConfName"], Parent = os.path.basename(NewDirPath))}.toml")
-    NextChar = GetConf("NextChar", f"{NewDirPath}/{Parse(String = ConfNames["DirConfName"], Parent = os.path.basename(NewDirPath))}.toml")
-
-    NewName = Parse(os.path.basename(FilePath), NextNum = NextNum, NextChar = NextChar)
+    NewName = os.path.basename(NewPath)
 
     try:
         Clone(FilePath, NewDirPath, NewName, True)
@@ -265,7 +283,7 @@ def Sort(FilePath):
 
     except Exception:
         Dir(Parse(String =  ConfDirs["FailedDir"]), Output = False, CopyConf = False)
-        NewName = os.path.basename(FilePath)
+        NewName = os.path.basename(NewPath)
         Clone(FilePath, Parse(String =  ConfDirs["FailedDir"]), NewName, True)
 
         TextOutput = Parse(String = ConfLog["NotSorted"], VarCall = FilePath)

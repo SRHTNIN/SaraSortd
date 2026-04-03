@@ -69,8 +69,8 @@ Title = "Unset" # NOTE: Do not change the title.
 Files = [
     {Pattern = "?", NewFileName = "~^", NextNum = 1, NextChar = "A"},
 ]
-# Pattern: the pattern used to sort files here. ? is a wildcard.
-# E.G: if Pattern is "?.png", all files ending with .png will end up here.
+# Pattern: the pattern used to sort files here. * is a wildcard, ? is a one-character wildcard.
+# E.G: if Pattern is "*.png", all files ending with .png will end up here.
 
 # NewFileName: the pattern for the new names of the files that get sorted here.
 

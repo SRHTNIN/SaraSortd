@@ -2,10 +2,10 @@ Title = "SaraSortd Config"
 SafeMode = 1
 SilentMode = 0
 CheckInput = 10
-OutputDir = [ "Log",]
+DotFiles = 1
 
 [Variables]
-NextNum = "*"
+NextNum = "!"
 NextChar = "&"
 Parent = "@"
 OrgFileName = "~"
@@ -20,20 +20,21 @@ VarCall = "%%"
 
 [DirectoryPaths]
 RootDir = "/home/sarah/TESTDIR"
-InputDir = [ "%RootDir%",]
-OutputDir = [ "%RootDir%/Output",]
+InputDir = [ "%RootDir%"]
+OutputDir = [ "%RootDir%/Output"]
 LogDir = "%RootDir%/.Logs"
 FailedDir = "%RootDir%/.Failed"
 
 [Names]
-LogFileName = "[y].[m].[d]._*"
+LogFileName = "[y].[m].[d]._!"
 DirConfName = ".@Config"
 
 [Log]
 All = "[h]:[n]:[s] | "
-Start = "Started: SaraSortd"
+Start = "Started SaraSortd."
 NotStart = "Error: Failed to start SaraSortd."
-Sorted = "Sorted: %% to %%."
-ValueSet = "Set: %% to be %% in %%."
-WrongType = "Error: %% is not a %%."
+MatchPattern = "Checking %%."
+Sorted = "Sorted %%."
+NotSorted = "Error: Failed to sort %%. No valid output directory."
+ValueSet = "Set %%."
 Unset = "Error: %% is not set."

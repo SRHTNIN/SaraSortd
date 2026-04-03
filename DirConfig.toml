@@ -1,7 +1,7 @@
 Title = "Unset"
 
 Files = [
-    {Pattern = "?", NewFileName = "~^", NextNum = 1, NextChar = "A"},
+    {Pattern = "*", NewFileName = "~^", NextNum = 1, NextChar = "A"},
 ]
 
 LastFile = "Unset"

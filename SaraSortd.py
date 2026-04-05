@@ -207,12 +207,13 @@ def Dir(Path, Output = True, CopyConf = True):
 
 
 def LogWrite(Text):
-    if (ConfDirs["LogDir"] != None and ConfNames != "Unset"):
-        if (ConfNames["LogFileName"] != None and ConfNames["LogFileName"] != "Unset"):
-            Dir(Parse(String = ConfDirs["LogDir"], Path = ConfPath), Output = False, CopyConf = False)
-            LogFile = f"{Parse(String = ConfDirs["LogDir"], Path = ConfPath)}/{Parse(String = ConfNames["LogFileName"], Path = ConfPath)}.log"
-            with open(LogFile, "a", encoding="utf-8", buffering=1) as File:
-                File.write(f"{Parse(String = ConfLog["All"], Path = ConfPath)}{Text}\n")
+    if (GetConf("Logging", ConfPath) == 1):
+        if (ConfDirs["LogDir"] != None and ConfNames != "Unset"):
+            if (ConfNames["LogFileName"] != None and ConfNames["LogFileName"] != "Unset"):
+                Dir(Parse(String = ConfDirs["LogDir"], Path = ConfPath), Output = False, CopyConf = False)
+                LogFile = f"{Parse(String = ConfDirs["LogDir"], Path = ConfPath)}/{Parse(String = ConfNames["LogFileName"], Path = ConfPath)}.log"
+                with open(LogFile, "a", encoding="utf-8", buffering=1) as File:
+                    File.write(f"{Parse(String = ConfLog["All"], Path = ConfPath)}{Text}\n")
 
 
 def DecideNewPath(FilePath):

@@ -4,6 +4,7 @@ SafeMode = 1
 SilentMode = 0
 CheckInput = 3
 DotFiles = 0
+Logging = 1
 
 [Variables]
 NextNum = "!"
@@ -20,9 +21,9 @@ Second = "[s]"
 VarCall = "%%"
 
 [DirectoryPaths]
-RootDir = ["Unset"]
-InputDir = [ "%RootDir%",]
-OutputDir = [ "%RootDir%/Output",]
+RootDir = "Unset"
+InputDir = [ "%RootDir%"]
+OutputDir = [ "%RootDir%/Output"]
 LogDir = "%RootDir%/.Logs"
 FailedDir = "%RootDir%/.Failed"
 

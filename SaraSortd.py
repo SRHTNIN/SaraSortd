@@ -311,7 +311,6 @@ def Init():
             LogWrite(TextOutput)
             Speak(TextOutput)
 
-            UpdateConf(ConfPath, "Running", 1)
             Main()
         
         else:
@@ -327,24 +326,30 @@ def Main():
     for Output in ConfDirs["OutputDir"]:
         Output = Parse(String = Output)
         Dir(Output)
+    
+    try:
+        while True:
+            for Input in ConfDirs["InputDir"]:
+                InputPath = Parse(Input)
+                
+                if not os.path.exists(InputPath):
+                    continue
 
-    while (GetConf("Running", ConfPath) == 1):
-        for Input in ConfDirs["InputDir"]:
-            InputPath = Parse(Input)
-            
-            if not os.path.exists(InputPath):
-                continue
+                for FileName in os.listdir(InputPath):
+                    FilePath = os.path.join(InputPath, FileName)
 
-            for FileName in os.listdir(InputPath):
-                FilePath = os.path.join(InputPath, FileName)
+                    if os.path.isfile(FilePath):
+                            FileName = os.path.basename(FilePath)
+                            if (FileName.startswith(".") and Conf["DotFiles"] == 0):
+                                continue
+                            Sort(FilePath)
+                        
+            time.sleep(Conf.get("CheckInput", 10))
 
-                if os.path.isfile(FilePath):
-                        FileName = os.path.basename(FilePath)
-                        if (FileName.startswith(".") and Conf["DotFiles"] == 0):
-                            continue
-                        Sort(FilePath)
-                    
-        time.sleep(Conf.get("CheckInput", 10))
+    except KeyboardInterrupt:
+        TextOutput = GetConf("Stop", ConfPath)
+        LogWrite(TextOutput)
+        Speak(TextOutput)
 
 
 Init()

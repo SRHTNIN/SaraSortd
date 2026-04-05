@@ -1,5 +1,4 @@
 Title = "SaraSortd Config"
-Running = 0
 SafeMode = 1
 SilentMode = 0
 CheckInput = 3
@@ -35,6 +34,7 @@ DirConfName = ".@Config"
 All = "[h]:[n]:[s] | "
 Start = "Started SaraSortd."
 NotStart = "Error: Failed to start SaraSortd."
+Stop = "\nStopped SaraSortd."
 MatchPattern = "Checking %%."
 Sorted = "Sorted %%."
 NotSorted = "Error: Failed to sort %%. No valid output directory."

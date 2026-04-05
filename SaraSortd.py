@@ -282,7 +282,8 @@ def Sort(FilePath):
 
     try:
         Clone(FilePath, NewDirPath, NewName, True)
-        
+        UpdateConf(f"{NewDirPath}/{Parse(String = ConfNames["DirConfName"], Parent = os.path.basename(NewDirPath))}.toml", "LastFile", NewName)
+
         TextOutput = Parse(String = ConfLog["Sorted"], VarCall = f"{FilePath} to {NewDirPath}/{NewName}")
         LogWrite(TextOutput)
         Speak(TextOutput)

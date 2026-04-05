@@ -1,11 +1,17 @@
 Title = "Unset"
+LastFile = "Unset"
+ParentDir = "Unset"
 
 [[Files]]
-Pattern = "*"
+Pattern = "*.jpg"
 NewFileName = "~^"
 NextNum = 1
 NextChar = "A"
 CaseSensitive = 0
 
-LastFile = "Unset"
-ParentDir = "Unset"
+[[Files]]
+Pattern = "*.png"
+NewFileName = "~^"
+NextNum = 1
+NextChar = "A"
+CaseSensitive = 0

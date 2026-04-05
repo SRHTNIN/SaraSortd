@@ -4,7 +4,7 @@ SilentMode = 0
 CheckInput = 3
 DotFiles = 0
 Logging = 1
-WriteDirConf = 1
+OverwriteDirConf = 0
 
 [Variables]
 NextNum = "!"

@@ -195,7 +195,7 @@ def Dir(Path, Output = True, CopyConf = True):
     
     if (CopyConf):
         NewDirConf = f"{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml"
-        if (Conf["WriteDirConf"] == 1 or not os.path.exists(os.path.join(f"{Path}/{NewDirConf}"))):
+        if (Conf["OverwriteDirConf"] == 1 or not os.path.exists(os.path.join(f"{Path}/{NewDirConf}"))):
             Clone("DirConfig.toml", Path, NewDirConf)
             UpdateConf(f"{Path}/{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml", "ParentDir", ParentName)
             UpdateConf(f"{Path}/{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml", "Title", f"{ParentName} Config")

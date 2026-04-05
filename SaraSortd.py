@@ -310,6 +310,7 @@ def Init():
             LogWrite(TextOutput)
             Speak(TextOutput)
 
+            UpdateConf(ConfPath, "Running", 1)
             Main()
         
         else:
@@ -326,7 +327,7 @@ def Main():
         Output = Parse(String = Output)
         Dir(Output)
 
-    while True:
+    while (GetConf("Running", ConfPath) == 1):
         for Input in ConfDirs["InputDir"]:
             InputPath = Parse(Input)
             

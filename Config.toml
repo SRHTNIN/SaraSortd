@@ -4,6 +4,7 @@ SilentMode = 0
 CheckInput = 3
 DotFiles = 0
 Logging = 1
+WriteDirConf = 1
 
 [Variables]
 NextNum = "!"
@@ -21,7 +22,7 @@ VarCall = "%%"
 
 [DirectoryPaths]
 RootDir = "Unset"
-InputDir = [ "%RootDir%"]
+InputDir = [ "%Pic%/Input"]
 OutputDir = [ "%RootDir%/Output"]
 LogDir = "%RootDir%/.Logs"
 FailedDir = "%RootDir%/.Failed"

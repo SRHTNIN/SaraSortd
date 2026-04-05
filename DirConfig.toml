@@ -3,14 +3,7 @@ LastFile = "Unset"
 ParentDir = "Unset"
 
 [[Files]]
-Pattern = "*.jpg"
-NewFileName = "~^"
-NextNum = 1
-NextChar = "A"
-CaseSensitive = 0
-
-[[Files]]
-Pattern = "*.png"
+Pattern = "*"
 NewFileName = "~^"
 NextNum = 1
 NextChar = "A"

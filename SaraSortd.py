@@ -194,10 +194,11 @@ def Dir(Path, Output = True, CopyConf = True):
     os.makedirs(Path, exist_ok=True)
     
     if (CopyConf):
-        Clone("DirConfig.toml", Path, f"{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml")  
-        
-        UpdateConf(f"{Path}/{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml", "ParentDir", ParentName)
-        UpdateConf(f"{Path}/{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml", "Title", f"{ParentName} Config")
+        NewDirConf = f"{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml"
+        if (Conf["OverwriteDirConf"] == 1 or not os.path.exists(os.path.join(f"{Path}/{NewDirConf}"))):
+            Clone("DirConfig.toml", Path, NewDirConf)
+            UpdateConf(f"{Path}/{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml", "ParentDir", ParentName)
+            UpdateConf(f"{Path}/{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml", "Title", f"{ParentName} Config")
 
     if (Output):
         ParsedPath = Parse(String = Path)
@@ -207,12 +208,13 @@ def Dir(Path, Output = True, CopyConf = True):
 
 
 def LogWrite(Text):
-    if (ConfDirs["LogDir"] != None and ConfNames != "Unset"):
-        if (ConfNames["LogFileName"] != None and ConfNames["LogFileName"] != "Unset"):
-            Dir(Parse(String = ConfDirs["LogDir"], Path = ConfPath), Output = False, CopyConf = False)
-            LogFile = f"{Parse(String = ConfDirs["LogDir"], Path = ConfPath)}/{Parse(String = ConfNames["LogFileName"], Path = ConfPath)}.log"
-            with open(LogFile, "a", encoding="utf-8", buffering=1) as File:
-                File.write(f"{Parse(String = ConfLog["All"], Path = ConfPath)}{Text}\n")
+    if (GetConf("Logging", ConfPath) == 1):
+        if (ConfDirs["LogDir"] != None and ConfNames != "Unset"):
+            if (ConfNames["LogFileName"] != None and ConfNames["LogFileName"] != "Unset"):
+                Dir(Parse(String = ConfDirs["LogDir"], Path = ConfPath), Output = False, CopyConf = False)
+                LogFile = f"{Parse(String = ConfDirs["LogDir"], Path = ConfPath)}/{Parse(String = ConfNames["LogFileName"], Path = ConfPath)}.log"
+                with open(LogFile, "a", encoding="utf-8", buffering=1) as File:
+                    File.write(f"{Parse(String = ConfLog["All"], Path = ConfPath)}{Text}\n")
 
 
 def DecideNewPath(FilePath):
@@ -241,7 +243,13 @@ def DecideNewPath(FilePath):
             LogWrite(TextOutput)
             Speak(TextOutput)
 
-            if fnmatch.fnmatch(UnsortedFile, Pattern):
+            if (File["CaseSensitive"] == 1):
+                Match = fnmatch.fnmatchcase(UnsortedFile, Pattern)
+                
+            else:
+                Match = fnmatch.fnmatch(UnsortedFile.lower(), Pattern.lower())
+
+            if Match:
                 NewFileName = File["NewFileName"]
 
                 if (ConfVars["NextNum"] in NewFileName):
@@ -275,7 +283,8 @@ def Sort(FilePath):
 
     try:
         Clone(FilePath, NewDirPath, NewName, True)
-        
+        UpdateConf(f"{NewDirPath}/{Parse(String = ConfNames["DirConfName"], Parent = os.path.basename(NewDirPath))}.toml", "LastFile", NewName)
+
         TextOutput = Parse(String = ConfLog["Sorted"], VarCall = f"{FilePath} to {NewDirPath}/{NewName}")
         LogWrite(TextOutput)
         Speak(TextOutput)
@@ -319,24 +328,30 @@ def Main():
     for Output in ConfDirs["OutputDir"]:
         Output = Parse(String = Output)
         Dir(Output)
+    
+    try:
+        while True:
+            for Input in ConfDirs["InputDir"]:
+                InputPath = Parse(Input)
+                
+                if not os.path.exists(InputPath):
+                    continue
 
-    while True:
-        for Input in ConfDirs["InputDir"]:
-            InputPath = Parse(Input)
-            
-            if not os.path.exists(InputPath):
-                continue
+                for FileName in os.listdir(InputPath):
+                    FilePath = os.path.join(InputPath, FileName)
 
-            for FileName in os.listdir(InputPath):
-                FilePath = os.path.join(InputPath, FileName)
+                    if os.path.isfile(FilePath):
+                            FileName = os.path.basename(FilePath)
+                            if (FileName.startswith(".") and Conf["DotFiles"] == 0):
+                                continue
+                            Sort(FilePath)
+                        
+            time.sleep(Conf.get("CheckInput", 10))
 
-                if os.path.isfile(FilePath):
-                        FileName = os.path.basename(FilePath)
-                        if (FileName.startswith(".") and Conf["DotFiles"] == 0):
-                            continue
-                        Sort(FilePath)
-                    
-        time.sleep(Conf.get("CheckInput", 10))
+    except KeyboardInterrupt:
+        TextOutput = GetConf("Stop", ConfPath)
+        LogWrite(TextOutput)
+        Speak(TextOutput)
 
 
 Init()

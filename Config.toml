@@ -2,7 +2,9 @@ Title = "SaraSortd Config"
 SafeMode = 1
 SilentMode = 0
 CheckInput = 3
-DotFiles = 1
+DotFiles = 0
+Logging = 1
+OverwriteDirConf = 0
 
 [Variables]
 NextNum = "!"
@@ -20,7 +22,7 @@ VarCall = "%%"
 
 [DirectoryPaths]
 RootDir = "Unset"
-InputDir = [ "%RootDir%"]
+InputDir = [ "%Pic%/Input"]
 OutputDir = [ "%RootDir%/Output"]
 LogDir = "%RootDir%/.Logs"
 FailedDir = "%RootDir%/.Failed"
@@ -33,6 +35,7 @@ DirConfName = ".@Config"
 All = "[h]:[n]:[s] | "
 Start = "Started SaraSortd."
 NotStart = "Error: Failed to start SaraSortd."
+Stop = "\nStopped SaraSortd."
 MatchPattern = "Checking %%."
 Sorted = "Sorted %%."
 NotSorted = "Error: Failed to sort %%. No valid output directory."

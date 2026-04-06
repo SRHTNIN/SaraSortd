@@ -1,8 +1,10 @@
 Title = "Unset"
-
-Files = [
-    {Pattern = "*", NewFileName = "~^", NextNum = 1, NextChar = "A"},
-]
-
 LastFile = "Unset"
 ParentDir = "Unset"
+
+[[Files]]
+Pattern = "*"
+NewFileName = "~^"
+NextNum = 1
+NextChar = "A"
+CaseSensitive = 0

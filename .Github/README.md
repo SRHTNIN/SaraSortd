@@ -128,9 +128,9 @@ Pattern = "*" # A pattern used to sort files to this directory. * is a wildcard;
 
 NewFileName = "~^" # A pattern for the new names of the files that get sorted to this directory from matching this "Pattern".
 
-NextNum = 1 # Used to keep track of the next available number for file names. It gets automatically incremented when NextNum is used in NewFileName, and a file gets sorted to this directory and renamed.
+NextNum = 1 # Used to keep track of the next available number for file names. If you have two of the character that represents NextNum (Found in Config.toml), you can stack them together to make 01 or 001 instead of 1. It gets automatically incremented when NextNum is used in NewFileName, and a file gets sorted to this directory and renamed.
 
-NextChar = "A" # Used to keep track of the next available letter for file names. It gets automatically incremented (E.G: A into B) when NextChar is used in NewFileName, and a file gets sorted to this directory and renamed.
+NextChar = "A" # Used to keep track of the next available letter for file names. It gets automatically incremented (E.G: A into B or AA into AB then AZ into BA) when NextChar is used in NewFileName, and a file gets sorted to this directory and renamed.
 
 CaseSensitive = 0 # Whether this "Pattern" is case-sensitive or not. 1 is yes, 0 is no. E.G: if CaseSensitive = 1 and this "Pattern" is "*.PNG", a file named "picture.png" won't get sorted to this directory. If CaseSensitive = 0 and this "Pattern" is "*.PNG", a file named "picture.png" *will* get sorted to this directory.
 

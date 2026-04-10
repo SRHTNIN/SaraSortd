@@ -102,6 +102,10 @@ LastFile = "Unset" # The last file that was sorted to this directory. It gets au
 
 ParentDir = "Unset" # The name of this directory. It gets automatically updated when DirConfig.toml gets copied to an output directory.
 
+ValidInputDirs = ["*"] # Directories that are valid for sorting. Basically, if a file is from one of these directories, they can be sorted here. * is a wildcard; ? is a one-character wilcard. E.G: if "ValidInputDirs = ["/TestDir/*"]" any file from any directory in "/TestDir" will be allowed to be sorted here.
+
+FileLimit = 0
+
 [[Files]] # The double brackets means that you can add multiple types of files to be sorted here. Just copy [[Files]] and all the parameters under it, and paste it under or over this section, then you may change the values of the new parameters. E.G:
 
 # [[Files]]
@@ -116,6 +120,7 @@ ParentDir = "Unset" # The name of this directory. It gets automatically updated 
 # NextNum = 1
 # NextChar = "A"
 # CaseSensitive = 0
+# Overwrite = 1
 
 # Will sort .png files to this directory and rename them to "GoodImage.png", but also sort .jpg files into this directory yet rename those to "BetterImage.jpg".
 
@@ -127,5 +132,7 @@ NextNum = 1 # Used to keep track of the next available number for file names. It
 
 NextChar = "A" # Used to keep track of the next available letter for file names. It gets automatically incremented (E.G: A into B) when NextChar is used in NewFileName, and a file gets sorted to this directory and renamed.
 
-CaseSensitive = 0 # Whether this "Pattern" is case-sensitive or not. 1 is yes, 0 is no. E.G: if CaseSensitive = 1 and this "Pattern" is "*.PNG", a file named "picture.png" won't get sorted to this directory. if CaseSensitive = 0 and this "Pattern" is "*.PNG", a file named "picture.png" *will* get sorted to this directory. 
+CaseSensitive = 0 # Whether this "Pattern" is case-sensitive or not. 1 is yes, 0 is no. E.G: if CaseSensitive = 1 and this "Pattern" is "*.PNG", a file named "picture.png" won't get sorted to this directory. If CaseSensitive = 0 and this "Pattern" is "*.PNG", a file named "picture.png" *will* get sorted to this directory.
+
+Overwrite = 1 # Whether this specific file type can be overwritten by others of the same type. 0 is no, 1 is yes.
 ```

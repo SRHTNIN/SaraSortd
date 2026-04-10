@@ -23,7 +23,7 @@ DotFiles = 0 # If SaraSortd should sort files that begin with ".". This is mainl
 
 Logging = 1 # If SaraSortd's logging system should be active. If this is 0, nothing will be logged into files.
 
-OverwriteDirConf = 0 # If SaraSortd should overwrite directory configs with DirConfig.toml.
+OverwriteDirConf = 0 # If SaraSortd should overwrite directory configs with DirConfig.toml. 0 is no, 1 is yes.
 
 [Variables] # Only use these in config files, not the actual file names themselves.
 NextNum = "*" # The next available number. If 1 already exists, 2 will be used. Starts at 1.

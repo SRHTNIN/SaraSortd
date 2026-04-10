@@ -214,7 +214,7 @@ def Dir(Path, Output = True, CopyConf = True):
                 ParentName,
             )
             UpdateConf(
-                f"{Path}/{Parse(String=ConfNames['DirConfName'], Path=ConfPath, Parent=ParentName)}.toml",
+                f"{Path}/{Parse(String = ConfNames['DirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
                 "Title",
                 f"{ParentName} Config",
             )
@@ -233,12 +233,8 @@ def LogWrite(Text):
                 ConfNames["LogFileName"] is not None
                 and ConfNames["LogFileName"] != "Unset"
             ):
-                Dir(
-                    Parse(String=ConfDirs["LogDir"], Path=ConfPath),
-                    Output=False,
-                    CopyConf=False,
-                )
-                LogFile = f"{Parse(String=ConfDirs['LogDir'], Path=ConfPath)}/{Parse(String=ConfNames['LogFileName'], Path=ConfPath)}.log"
+                Dir(Parse(String = ConfDirs["LogDir"], Path = ConfPath), Output = False, CopyConf = False)
+                LogFile = f"{Parse(String = ConfDirs['LogDir'], Path = ConfPath)}/{Parse(String = ConfNames['LogFileName'], Path = ConfPath)}.log"
                 with open(LogFile, "a", encoding = "utf-8", buffering = 1) as File:
                     File.write(f"{Parse(String = ConfLog['All'], Path = ConfPath)}{Text}\n")
 
@@ -292,6 +288,18 @@ def DecideNewPath(FilePath):
             if Match:
                 NewFileName = File["NewFileName"]
 
+                NewFileName = Parse(
+                    String = NewFileName,
+                    Path = DirConfPath,
+                    OrgFile = UnsortedFile,
+                    NextNum = File["NextNum"],
+                    NextChar = File["NextChar"],
+                    Parent = ParentName,
+                )
+
+                if File["Overwrite"] == 0 and os.path.exists(os.path.join(Output, NewFileName)):
+                    continue
+
                 if ConfVars["NextNum"] in NewFileName:
                     UpdateConf(
                         DirConfPath,
@@ -305,14 +313,6 @@ def DecideNewPath(FilePath):
                         NewChar = chr(((ord(CurrentChar.upper()) - 65 + 1) % 26) + 65)
                         UpdateConf(DirConfPath, "NextChar", NewChar)
 
-                NewFileName = Parse(
-                    String = NewFileName,
-                    Path = DirConfPath,
-                    OrgFile = UnsortedFile,
-                    NextNum = File["NextNum"],
-                    NextChar = File["NextChar"],
-                    Parent = ParentName,
-                )
                 return f"{Output}/{NewFileName}"
 
 
@@ -365,6 +365,10 @@ def Init():
         CheckConf()
 
         if Start:
+            for InputDir in ConfDirs["InputDir"]:
+                InputDir = Parse(String = InputDir, Path = ConfPath, Parent = os.path.basename(os.path.dirname(InputDir)))
+                Dir(InputDir, Output = False, CopyConf = False)
+
             TextOutput = Parse(String = ConfLog["Start"], Path = ConfPath)
             LogWrite(TextOutput)
             Speak(TextOutput)
@@ -384,7 +388,7 @@ def Init():
 
 def Main():
     for Output in ConfDirs["OutputDir"]:
-        Output = Parse(String = Output)
+        Output = Parse(String = Output, Parent = os.path.basename(os.path.dirname(Output)))
         Dir(Output)
 
     try:

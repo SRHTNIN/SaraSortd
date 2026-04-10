@@ -22,7 +22,7 @@ VarCall = "%%"
 
 [DirectoryPaths]
 RootDir = "Unset"
-InputDir = [ "%Pic%/Input"]
+InputDir = [ "%RootDir%/Input"]
 OutputDir = [ "%RootDir%/Output"]
 LogDir = "%RootDir%/.Logs"
 FailedDir = "%RootDir%/.Failed"

@@ -1,6 +1,7 @@
 Title = "Unset"
 LastFile = "Unset"
 ParentDir = "Unset"
+ValidInputDirs = ["*"]
 
 [[Files]]
 Pattern = "*"

@@ -1,4 +1,10 @@
-import toml, os, datetime, re, shutil, fnmatch, time
+import datetime
+import fnmatch
+import os
+import re
+import shutil
+import time
+import toml
 
 ConfPath = "./Config.toml"
 
@@ -10,11 +16,12 @@ ConfLog = None
 
 Start = True
 
+
 def Clear():
-    if os.name == 'nt':
-        os.system('cls')
+    if os.name == "nt":
+        os.system("cls")
     else:
-        os.system('clear')
+        os.system("clear")
 
 
 def LoadGlobalConf():
@@ -48,64 +55,64 @@ def CheckConf(Path = ConfPath):
 def GetConf(Parameter, *Paths):
     for Path in Paths:
         ConfData = toml.load(Path)
-    
+
         if Parameter in ConfData:
-            return (ConfData[Parameter])
-        
+            return ConfData[Parameter]
+
         for Key, Value in ConfData.items():
-            if (isinstance(Value, dict)):
-                if (Parameter in Value):
+            if isinstance(Value, dict):
+                if Parameter in Value:
                     return Value[Parameter]
-            elif (isinstance(Value, list)):
+            elif isinstance(Value, list):
                 for Item in Value:
-                    if (isinstance(Item, dict) and Parameter in Item):
+                    if isinstance(Item, dict) and Parameter in Item:
                         return Item[Parameter]
-    
+
     return None
 
 
 def UpdateConf(Path, Parameter, Value, Append = False):
     ConfData = toml.load(Path)
-   
+
     def UpdateInData(Data):
         if isinstance(Data, dict):
             if Parameter in Data:
-                if (not Append):
+                if not Append:
                     Data[Parameter] = Value
 
                 else:
                     Data.setdefault(Parameter, [])
 
-                    if (Value not in Data[Parameter]):
+                    if Value not in Data[Parameter]:
                         Data[Parameter].append(Value)
 
                 return True
             else:
                 for Key, DataValue in Data.items():
-                    if (UpdateInData(DataValue)):
+                    if UpdateInData(DataValue):
                         return True
-        
-        elif (isinstance(Data, list)):
+
+        elif isinstance(Data, list):
             for Item in Data:
-                if (UpdateInData(Item)):
+                if UpdateInData(Item):
                     return True
-        
+
         return False
-    
+
     Updated = UpdateInData(ConfData)
 
-    if (not Updated):
+    if not Updated:
         if not Append:
             ConfData[Parameter] = Value
-        
+
         else:
             ConfData.setdefault(Parameter, [])
-            if (Value not in ConfData[Parameter]):
+            if Value not in ConfData[Parameter]:
                 ConfData[Parameter].append(Value)
 
-    with open(Path, 'w', encoding='utf-8') as File:
+    with open(Path, "w", encoding="utf-8") as File:
         toml.dump(ConfData, File)
-    
+
     TextOutput = Parse(String = ConfLog["ValueSet"], VarCall = f"{Parameter} to {Value}")
     LogWrite(TextOutput)
     Speak(TextOutput)
@@ -113,38 +120,40 @@ def UpdateConf(Path, Parameter, Value, Append = False):
 
 def Error():
     global Start
-    if (Conf["SafeMode"] == 1):
-            Start = False
+    if Conf["SafeMode"] == 1:
+        Start = False
 
 
 def Speak(Text):
-    if (Conf["SilentMode"] != 1):
+    if Conf["SilentMode"] != 1:
         print(Text)
 
 
-def Parse(String = None, Path = ConfPath, 
-          NextNum = None, 
-          NextChar = None,
-          Parent = None,
-          OrgFile = None,
-          VarCall = None):
-    
+def Parse(
+    String = None,
+    Path = ConfPath,
+    NextNum = None,
+    NextChar = None,
+    Parent = None,
+    OrgFile = None,
+    VarCall = None,
+):
+
     def Replacer(Match):
         Content = Match.group(1)
 
-        if (Content == None or Content == ""):
-            if (VarCall != None):
+        if Content is None or Content == "":
+            if VarCall is not None:
                 return str(VarCall)
             else:
                 return ""
-        
+
         Value = GetConf(Content, Path)
-        if (Value != None):
+        if Value is not None:
             return Value
-            
-    
+
     Now = datetime.datetime.now()
-    if (OrgFile != None):
+    if OrgFile is not None:
         OrgFileName, OrgFileType = os.path.splitext(OrgFile)
     else:
         OrgFileName = None
@@ -162,7 +171,7 @@ def Parse(String = None, Path = ConfPath,
         ConfVars["Hour"]: str(Now.hour),
         ConfVars["Minute"]: str(Now.minute),
         ConfVars["Second"]: str(Now.second),
-        ConfVars["VarCall"]: str(VarCall)
+        ConfVars["VarCall"]: str(VarCall),
     }
 
     for Key, Value in VarValues.items():
@@ -185,36 +194,53 @@ def Clone(Source, Destination, NewName, Delete = False):
     BaseName = os.path.basename(Source)
     shutil.move(os.path.join(Destination, BaseName), os.path.join(Destination, NewName))
 
-    if (Delete):
+    if Delete:
         os.remove(Source)
 
 
 def Dir(Path, Output = True, CopyConf = True):
     ParentName = os.path.basename(Path)
     os.makedirs(Path, exist_ok=True)
-    
-    if (CopyConf):
-        NewDirConf = f"{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml"
-        if (Conf["OverwriteDirConf"] == 1 or not os.path.exists(os.path.join(f"{Path}/{NewDirConf}"))):
-            Clone("DirConfig.toml", Path, NewDirConf)
-            UpdateConf(f"{Path}/{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml", "ParentDir", ParentName)
-            UpdateConf(f"{Path}/{Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)}.toml", "Title", f"{ParentName} Config")
 
-    if (Output):
+    if CopyConf:
+        NewDirConf = f"{Parse(String = ConfNames['DirConfName'], Path = ConfPath, Parent = ParentName)}.toml"
+        if Conf["OverwriteDirConf"] == 1 or not os.path.exists(
+            os.path.join(f"{Path}/{NewDirConf}")
+        ):
+            Clone("DirConfig.toml", Path, NewDirConf)
+            UpdateConf(
+                f"{Path}/{Parse(String = ConfNames['DirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
+                "ParentDir",
+                ParentName,
+            )
+            UpdateConf(
+                f"{Path}/{Parse(String=ConfNames['DirConfName'], Path=ConfPath, Parent=ParentName)}.toml",
+                "Title",
+                f"{ParentName} Config",
+            )
+
+    if Output:
         ParsedPath = Parse(String = Path)
         ParsedOutputs = [Parse(String = Dir) for Dir in ConfDirs["OutputDir"]]
-        if (ParsedPath not in ParsedOutputs):
+        if ParsedPath not in ParsedOutputs:
             UpdateConf(ConfPath, "OutputDir", Path, True)
 
 
 def LogWrite(Text):
-    if (GetConf("Logging", ConfPath) == 1):
-        if (ConfDirs["LogDir"] != None and ConfNames != "Unset"):
-            if (ConfNames["LogFileName"] != None and ConfNames["LogFileName"] != "Unset"):
-                Dir(Parse(String = ConfDirs["LogDir"], Path = ConfPath), Output = False, CopyConf = False)
-                LogFile = f"{Parse(String = ConfDirs["LogDir"], Path = ConfPath)}/{Parse(String = ConfNames["LogFileName"], Path = ConfPath)}.log"
-                with open(LogFile, "a", encoding="utf-8", buffering=1) as File:
-                    File.write(f"{Parse(String = ConfLog["All"], Path = ConfPath)}{Text}\n")
+    if GetConf("Logging", ConfPath) == 1:
+        if ConfDirs["LogDir"] is not None and ConfNames != "Unset":
+            if (
+                ConfNames["LogFileName"] is not None
+                and ConfNames["LogFileName"] != "Unset"
+            ):
+                Dir(
+                    Parse(String=ConfDirs["LogDir"], Path=ConfPath),
+                    Output=False,
+                    CopyConf=False,
+                )
+                LogFile = f"{Parse(String=ConfDirs['LogDir'], Path=ConfPath)}/{Parse(String=ConfNames['LogFileName'], Path=ConfPath)}.log"
+                with open(LogFile, "a", encoding = "utf-8", buffering = 1) as File:
+                    File.write(f"{Parse(String = ConfLog['All'], Path = ConfPath)}{Text}\n")
 
 
 def DecideNewPath(FilePath):
@@ -222,13 +248,27 @@ def DecideNewPath(FilePath):
 
     for Output in ConfDirs["OutputDir"]:
         Output = Parse(String = Output, Path = ConfPath)
-        
+
         ParentName = os.path.basename(Output)
 
         DirConfName = Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)
         DirConfPath = f"{Output}/{DirConfName}.toml"
 
-        if not os.path.exists(DirConfPath):
+        ValidInputDirs = GetConf("ValidInputDirs", DirConfPath)
+        print(ValidInputDirs)
+
+        for ValidInputDir in ValidInputDirs:
+            ValidInputDir = Parse(String = ValidInputDir, Parent = GetConf("ParentDir", DirConfPath))
+
+            TextOutput = Parse(String = ConfLog["MatchPattern"], VarCall = f"{os.path.dirname(FilePath)} against {ValidInputDir}")
+            LogWrite(TextOutput)
+            Speak(TextOutput)
+
+            InputDirValid = fnmatch.fnmatchcase(os.path.dirname(FilePath), ValidInputDir)
+            if (InputDirValid):
+                break
+
+        if not os.path.exists(DirConfPath) or not InputDirValid:
             continue
 
         FileConf = GetConf("Files", DirConfPath)
@@ -239,61 +279,77 @@ def DecideNewPath(FilePath):
         for File in FileConf:
             Pattern = File["Pattern"]
 
-            TextOutput = Parse(ConfLog["MatchPattern"], VarCall = f"{UnsortedFile} against {Pattern}")
+            TextOutput = Parse(String = ConfLog["MatchPattern"], VarCall = f"{UnsortedFile} against {Pattern}")
             LogWrite(TextOutput)
             Speak(TextOutput)
 
-            if (File["CaseSensitive"] == 1):
+            if File["CaseSensitive"] == 1:
                 Match = fnmatch.fnmatchcase(UnsortedFile, Pattern)
-                
+
             else:
                 Match = fnmatch.fnmatch(UnsortedFile.lower(), Pattern.lower())
 
             if Match:
                 NewFileName = File["NewFileName"]
 
-                if (ConfVars["NextNum"] in NewFileName):
-                    UpdateConf(DirConfPath, "NextNum", (int(GetConf("NextNum", DirConfPath)) + 1))
+                if ConfVars["NextNum"] in NewFileName:
+                    UpdateConf(
+                        DirConfPath,
+                        "NextNum",
+                        (int(GetConf("NextNum", DirConfPath)) + 1),
+                    )
 
-                if (ConfVars["NextChar"] in NewFileName):
+                if ConfVars["NextChar"] in NewFileName:
                     CurrentChar = GetConf("NextChar", DirConfPath)
-                    if (CurrentChar and len(CurrentChar) == 1 and CurrentChar.isalpha()):
-                        NewChar = chr(((ord(CurrentChar.upper()) - 65 +1) % 26) +65)
+                    if CurrentChar and len(CurrentChar) == 1 and CurrentChar.isalpha():
+                        NewChar = chr(((ord(CurrentChar.upper()) - 65 + 1) % 26) + 65)
                         UpdateConf(DirConfPath, "NextChar", NewChar)
 
-                NewFileName = Parse(String = NewFileName, Path = DirConfPath, OrgFile = UnsortedFile, NextNum = File["NextNum"], NextChar = File["NextChar"], Parent = ParentName)
+                NewFileName = Parse(
+                    String = NewFileName,
+                    Path = DirConfPath,
+                    OrgFile = UnsortedFile,
+                    NextNum = File["NextNum"],
+                    NextChar = File["NextChar"],
+                    Parent = ParentName,
+                )
                 return f"{Output}/{NewFileName}"
 
 
 def Sort(FilePath):
     NewPath = DecideNewPath(FilePath)
 
-    if (NewPath == None):
-        Dir(Parse(String =  ConfDirs["FailedDir"]), Output = False, CopyConf = False)
+    if NewPath is None:
+        Dir(Parse(String = ConfDirs["FailedDir"]), Output = False, CopyConf = False)
         NewName = os.path.basename(FilePath)
-        Clone(FilePath, Parse(String =  ConfDirs["FailedDir"]), NewName, True)
+        Clone(FilePath, Parse(String = ConfDirs["FailedDir"]), NewName, True)
 
         TextOutput = Parse(String = ConfLog["NotSorted"], VarCall = FilePath)
         LogWrite(TextOutput)
         Speak(TextOutput)
         return
 
-    NewDirPath = os.path.dirname(NewPath)    
+    NewDirPath = os.path.dirname(NewPath)
     NewName = os.path.basename(NewPath)
 
     try:
         Clone(FilePath, NewDirPath, NewName, True)
-        UpdateConf(f"{NewDirPath}/{Parse(String = ConfNames["DirConfName"], Parent = os.path.basename(NewDirPath))}.toml", "LastFile", NewName)
+        UpdateConf(
+            f"{NewDirPath}/{Parse(String = ConfNames['DirConfName'], Parent = os.path.basename(NewDirPath))}.toml",
+            "LastFile",
+            NewName,
+        )
 
-        TextOutput = Parse(String = ConfLog["Sorted"], VarCall = f"{FilePath} to {NewDirPath}/{NewName}")
+        TextOutput = Parse(
+            String = ConfLog["Sorted"], VarCall = f"{FilePath} to {NewDirPath}/{NewName}"
+        )
         LogWrite(TextOutput)
         Speak(TextOutput)
 
-
     except Exception:
-        Dir(Parse(String =  ConfDirs["FailedDir"]), Output = False, CopyConf = False)
+        Dir(Parse(String = ConfDirs["FailedDir"]), Output = False, CopyConf = False)
         NewName = os.path.basename(NewPath)
-        Clone(FilePath, Parse(String =  ConfDirs["FailedDir"]), NewName, True)
+        Clone(FilePath, Parse(String = ConfDirs["FailedDir"]), NewName, True)
 
         TextOutput = Parse(String = ConfLog["NotSorted"], VarCall = FilePath)
         LogWrite(TextOutput)
@@ -303,37 +359,39 @@ def Sort(FilePath):
 
 def Init():
     global Conf, ConfVars, ConfDirs, ConfNames, ConfLog
-    
+
     LoadGlobalConf()
-    if (Conf != None):
+    if Conf is not None:
         CheckConf()
-        
-        if (Start):
+
+        if Start:
             TextOutput = Parse(String = ConfLog["Start"], Path = ConfPath)
             LogWrite(TextOutput)
             Speak(TextOutput)
 
             Main()
-        
+
         else:
             TextOutput = Parse(String = ConfLog["NotStart"])
             LogWrite(TextOutput)
             Speak(TextOutput)
-    
+
     else:
-        print("NO CONFIG FOUND! Make sure the 'Config.toml' is in the same directory as 'SaraSortd.py'")
+        print(
+            "NO CONFIG FOUND! Make sure the 'Config.toml' is in the same directory as 'SaraSortd.py'"
+        )
 
 
 def Main():
     for Output in ConfDirs["OutputDir"]:
         Output = Parse(String = Output)
         Dir(Output)
-    
+
     try:
         while True:
             for Input in ConfDirs["InputDir"]:
                 InputPath = Parse(Input)
-                
+
                 if not os.path.exists(InputPath):
                     continue
 
@@ -341,11 +399,11 @@ def Main():
                     FilePath = os.path.join(InputPath, FileName)
 
                     if os.path.isfile(FilePath):
-                            FileName = os.path.basename(FilePath)
-                            if (FileName.startswith(".") and Conf["DotFiles"] == 0):
-                                continue
-                            Sort(FilePath)
-                        
+                        FileName = os.path.basename(FilePath)
+                        if FileName.startswith(".") and Conf["DotFiles"] == 0:
+                            continue
+                        Sort(FilePath)
+
             time.sleep(Conf.get("CheckInput", 10))
 
     except KeyboardInterrupt:

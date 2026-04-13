@@ -9,12 +9,22 @@ previous config files won't work anymore with the new SaraSortd.py.
 The second number going up means that something has been changed, but you can still
 use your old config files with SaraSortd.py.
 
-## Installation
-
-
 
 ## Dependencies
 toml: Use ```pip install toml``` to install toml.
+
+
+## Installation
+
+Here's an [installation video.](https://youtu.be/ZMIaOhZA0kE).
+Here's a step-by-step tutorial (in case you don't want to watch the video).
+
+1. Install ZIP-file.
+2. Unzip ZIP-file wherever you want the program to live.
+3. Navigate to the new SaraSortd directory in your terminal.
+4. Edit your config files to your liking.
+5. Run ```python SaraSortd.py``` to run the program. (This will make new directories for you.)
+6. Edit your output directories' configs.
 
 ## Config explanation
 
@@ -100,6 +110,7 @@ ValueSet = "Set: %%." # When a value in a config is set.
 Unset = "Error: %% is not set." # When a value isn't set.
 # %% here is just the parameter who's value was either "Unset" or None. E.G: "RootDir".
 ```
+
 
 ### Output Directory Config (DirConfig.toml)
 

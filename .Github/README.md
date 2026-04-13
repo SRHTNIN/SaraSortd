@@ -3,6 +3,16 @@ A python daemon that can automatically sort your files to your liking without us
 
 It's made by Sarah, hence the name. :3
 
+The versioning for SaraSortd is like so: the first number going up means that your
+previous config files won't work anymore with the new SaraSortd.py.
+
+The second number going up means that something has been changed, but you can still
+use your old config files with SaraSortd.py.
+
+## Installation
+
+
+
 ## Dependencies
 toml: Use ```pip install toml``` to install toml.
 

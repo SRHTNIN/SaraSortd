@@ -1,7 +1,7 @@
 Title = "SaraSortd Config"
 SafeMode = 1
 SilentMode = 0
-CheckInput = 3
+CheckInput = 10
 DotFiles = 0
 Logging = 1
 OverwriteDirConf = 0

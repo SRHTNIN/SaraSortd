@@ -3,6 +3,7 @@ LastFile = "Unset"
 ParentDir = "Unset"
 ValidInputDirs = ["*"]
 FileLimit = 0
+DeleteOrg = 1
 
 [[Files]]
 Pattern = "*"

@@ -266,7 +266,6 @@ def DecideNewPath(FilePath):
         if not os.path.exists(DirConfPath) or not InputDirValid:
             continue
 
-
         OutputFiles = 0
 
         FileLimitConf = GetConf("FileLimit", DirConfPath)
@@ -365,37 +364,37 @@ def DecideNewPath(FilePath):
 def Sort(FilePath):
     NewPath = DecideNewPath(FilePath)
 
+    NewDirPath = os.path.dirname(NewPath)
+    NewName = os.path.basename(NewPath)
+
+    if (GetConf("DeleteOrg", f"{NewDirPath}/{Parse(String = ConfNames['DirConfName'], Parent = (os.path.basename(NewDirPath)))}.toml") == 1):
+        Delete = True
+
+    else:
+        Delete = False
+
     if NewPath is None:
         Dir(Parse(String = ConfDirs["FailedDir"]), Output = False, CopyConf = False)
         NewName = os.path.basename(FilePath)
-        Clone(FilePath, Parse(String = ConfDirs["FailedDir"]), NewName, True)
+        Clone(FilePath, Parse(String = ConfDirs["FailedDir"]), NewName, Delete)
 
         TextOutput = Parse(String = ConfLog["NotSorted"], VarCall = FilePath)
         LogWrite(TextOutput)
         Speak(TextOutput)
         return
 
-    NewDirPath = os.path.dirname(NewPath)
-    NewName = os.path.basename(NewPath)
-
     try:
-        Clone(FilePath, NewDirPath, NewName, True)
-        UpdateConf(
-            f"{NewDirPath}/{Parse(String = ConfNames['DirConfName'], Parent = os.path.basename(NewDirPath))}.toml",
-            "LastFile",
-            NewName,
-        )
+        Clone(FilePath, NewDirPath, NewName, Delete)
+        UpdateConf(f"{NewDirPath}/{Parse(String = ConfNames['DirConfName'], Parent = os.path.basename(NewDirPath))}.toml", "LastFile", NewName)
 
-        TextOutput = Parse(
-            String = ConfLog["Sorted"], VarCall = f"{FilePath} to {NewDirPath}/{NewName}"
-        )
+        TextOutput = Parse(String = ConfLog["Sorted"], VarCall = f"{FilePath} to {NewDirPath}/{NewName}")
         LogWrite(TextOutput)
         Speak(TextOutput)
 
     except Exception:
         Dir(Parse(String = ConfDirs["FailedDir"]), Output = False, CopyConf = False)
         NewName = os.path.basename(NewPath)
-        Clone(FilePath, Parse(String = ConfDirs["FailedDir"]), NewName, True)
+        Clone(FilePath, Parse(String = ConfDirs["FailedDir"]), NewName, Delete)
 
         TextOutput = Parse(String = ConfLog["NotSorted"], VarCall = FilePath)
         LogWrite(TextOutput)
@@ -419,7 +418,7 @@ def Init():
                 Output = Parse(String = Output, Parent = os.path.basename(os.path.dirname(Output)))
                 Dir(Output)
 
-                DirConfPath = f"{os.path.join(Output, Parse(String = ConfNames["DirConfName"], Parent = os.path.basename(Output)))}.toml"
+                DirConfPath = f"{Output}/{Parse(String = ConfNames["DirConfName"], Parent = os.path.basename(Output))}.toml"
                 ConfData = toml.load(DirConfPath)
 
                 for Item in ConfData.get("Files", []):
@@ -444,9 +443,7 @@ def Init():
             Speak(TextOutput)
 
     else:
-        print(
-            "NO CONFIG FOUND! Make sure the 'Config.toml' is in the same directory as 'SaraSortd.py'"
-        )
+        print("NO CONFIG FOUND! Make sure the 'Config.toml' is in the same directory as 'SaraSortd.py'")
 
 
 def Main():
@@ -459,7 +456,7 @@ def Main():
                     continue
 
                 for FileName in os.listdir(InputPath):
-                    FilePath = os.path.join(InputPath, FileName)
+                    FilePath = f"{InputPath}/{FileName}"
 
                     if os.path.isfile(FilePath):
                         FileName = os.path.basename(FilePath)

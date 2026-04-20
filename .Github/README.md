@@ -30,6 +30,11 @@ python
 
 toml: Use ```pip install toml``` to install toml.
 
+## Versioning
+
+If the first number in the version goes up, it means that old config files will not work with the new SaraSortd.py.
+
+If the second number in the version goes up, something new got added, but your old config files will still work just fine.
 
 ## Installation
 

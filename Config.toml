@@ -1,4 +1,5 @@
 Title = "SaraSortd Config"
+Version = "4.0"
 SafeMode = 1
 SilentMode = 0
 CheckInput = 5
@@ -21,7 +22,7 @@ Second = "[s]"
 VarCall = "%%"
 
 [DirectoryPaths]
-RootDir = "/home/sarah/TestDir"
+RootDir = "Unset"
 InputDir = [ "%RootDir%/Input" ]
 OutputDir = [ "%RootDir%/Output" ]
 LogDir = "%RootDir%/.Logs"

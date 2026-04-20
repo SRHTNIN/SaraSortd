@@ -1,4 +1,5 @@
 # SaraSortd
+(Version 4.0)
 
 A python daemon that can automatically sort your files to your liking without using AI.
 
@@ -38,7 +39,7 @@ If the second number in the version goes up, something new got added, but your o
 
 ## Installation
 
-Here's an [installation video.](https://youtu.be/ZMIaOhZA0kE).
+Here's an [installation video](https://youtu.be/ZMIaOhZA0kE).
 Here's a step-by-step tutorial (in case you don't want to watch the video).
 
 1. Install ZIP-file.
@@ -54,6 +55,8 @@ Here's a step-by-step tutorial (in case you don't want to watch the video).
 
 ```
 Title = "SaraSortd Config" # NOTE: Do not change the title.
+
+Version = "4.0" # Just the version number for the config file.
 
 SafeMode = 1 # If SaraSortd should stop if an error with the config appears. 1 is stop, 0 is continue.
 
@@ -142,6 +145,8 @@ The output directory config references the SaraSortd config (Config.toml). This 
 
 ```
 Title = "Unset" # The title of the config. This currently does nothing for SaraSortd, so it can be anything. It gets automatically updated when DirConfig.toml gets copied to an output directory.
+
+Version = "4.0" # The version number of the config.
 
 LastFile = "Unset" # The last file that was sorted to this directory. It gets automatically updated whenever a file gets sorted to this directory.
 

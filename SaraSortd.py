@@ -6,6 +6,8 @@ import shutil
 import time
 import toml
 
+# Version 4.0
+
 ConfPath = "./Config.toml"
 
 Conf = None

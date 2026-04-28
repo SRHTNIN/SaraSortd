@@ -1,5 +1,5 @@
 # SaraSortd
-(Version 5.0)
+(Version = "5.1")
 
 A python daemon that can automatically sort your files to your liking without using AI.
 
@@ -48,7 +48,7 @@ Here's a step-by-step tutorial (in case you don't want to watch the video).
 ```
 Title = "SaraSortd Config" # NOTE: Do not change the title. This is so that the program knows which config file is which.
 
-Version = "5.0" # Just the version number for the config file.
+Version = "5.1" # Just the version number for the config file.
 
 SafeMode = 1 # If SaraSortd should stop if an error with the config appears. 1 is stop, 0 is continue.
 
@@ -63,7 +63,7 @@ Logging = 1 # If SaraSortd's logging system should be active. If this is 0, noth
 OverwriteDirConf = 0 # If SaraSortd should overwrite directory configs with the config templates. 0 is no, 1 is yes.
 
 [Variables] # Only use these in config files, not the actual file names themselves.
-NextNum = "*" # The next available number. If 1 already exists, 2 will be used. Starts at 1.
+NextNum = "*" # The next available number. If 1 already exists, 2 will be used.
 
 NextChar = "&" # The next available character. If A already exists, B will be used.
 
@@ -138,7 +138,7 @@ The output directory config references the SaraSortd config (GlobalConf.toml). T
 ```
 Title = "Unset" # NOTE: Do not change the title. This is so that the program knows which config file is which.
 
-Version = "5.0" # The version number of the config.
+Version = "5.1" # The version number of the config.
 
 LastFile = "Unset" # The last file that was sorted to this directory. It gets automatically updated whenever a file gets sorted to this directory.
 
@@ -172,9 +172,9 @@ Pattern = "*" # A pattern used to sort files to this directory. * is a wildcard;
 
 NewFileName = "~^" # A pattern for the new names of the files that get sorted to this directory from matching this "Pattern".
 
-NextNum = 1 # Used to keep track of the next available number for file names. If you have two of the character that represents NextNum (Found in GlobalConf.toml), you can stack them together to make 01 or 001 instead of 1. It gets automatically incremented when NextNum is used in NewFileName, and a file gets sorted to this directory and renamed.
+NextNum = 1 # Used to keep track of the next available number for file names. If you change NextNum to be 01 or 001 instead of 1, it'll still work. 09 => 10. It gets automatically incremented when NextNum is used in NewFileName, and a file gets sorted to this directory and renamed.
 
-NextChar = "A" # Used to keep track of the next available letter for file names. It gets automatically incremented (E.G: A into B or AA into AB then AZ into BA) when NextChar is used in NewFileName, and a file gets sorted to this directory and renamed.
+NextChar = "A" # Used to keep track of the next available letter for file names. If you change NextChar to be AA or AAA instead of A, it'll still work. AZ => BA. It gets automatically incremented (E.G: A into B or AA into AB then AZ into BA) when NextChar is used in NewFileName, and a file gets sorted to this directory and renamed.
 
 CaseSensitive = 0 # Whether this "Pattern" is case-sensitive or not. 1 is yes, 0 is no. E.G: if CaseSensitive = 1 and this "Pattern" is "*.PNG", a file named "picture.png" won't get sorted to this directory. If CaseSensitive = 0 and this "Pattern" is "*.PNG", a file named "picture.png" *will* get sorted to this directory.
 
@@ -186,7 +186,7 @@ Overwrite = 1 # Whether this specific file type can be overwritten by others of 
 ```
 Title = "Unset" # NOTE: Do not change the title. This is so that the program knows which config file is which.
 
-Version = "5.0"
+Version = "5.1"
 
 ParentDir = "Unset" # The name of this directory. It gets automatically updated when this config gets copied to an output directory.
 ```

@@ -6,7 +6,7 @@ import shutil
 import time
 import toml
 
-# Version 5.0
+# Version = "5.1"
 
 ConfPath = "./GlobalConf.toml"
 
@@ -327,8 +327,9 @@ def DecideNewPath(FilePath):
 
                 if ConfVars["NextNum"] in File["NewFileName"]:
                     ConfData = toml.load(OutDirConfPath)
-
-                    NewNum = (int(File["NextNum"]) + 1)
+                    Width = len(File["NextNum"])
+                    NewNum = str((int(File["NextNum"]) + 1)).rjust(Width, "0")
+                    print(File["NextNum"],"=>",NewNum)
 
                     for Item in ConfData.get("Files", []):
                         if Item.get("Pattern") == File["Pattern"]:
@@ -338,7 +339,7 @@ def DecideNewPath(FilePath):
                     with open(OutDirConfPath, "w", encoding="utf-8") as ConfFile:
                         toml.dump(ConfData, ConfFile)
 
-                    TextOutput = Parse(String = ConfLog["ValueSet"], VarCall = f"NextChar to {NewNum}")
+                    TextOutput = Parse(String = ConfLog["ValueSet"], VarCall = f"NextNum to {NewNum}")
                     LogWrite(TextOutput)
                     Speak(TextOutput)
 
@@ -509,6 +510,5 @@ def Main():
         TextOutput = GetConf("Stop", ConfPath)
         LogWrite(TextOutput)
         Speak(TextOutput)
-
 
 Init()

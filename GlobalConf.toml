@@ -1,5 +1,5 @@
 Title = "SaraSortd Config"
-Version = "5.0"
+Version = "5.1"
 SafeMode = 1
 SilentMode = 0
 CheckInput = 5
@@ -22,7 +22,7 @@ Second = "[s]"
 VarCall = "%%"
 
 [DirectoryPaths]
-RootDir = "C:/Users/sar2711/OneDrive - Telemark fylkeskommune/Desktop/Testdir"
+RootDir = "Unset"
 InputDir = [ "%RootDir%/Input" ]
 OutputDir = [ "%RootDir%/Output" ]
 LogDir = "%RootDir%/.Logs"

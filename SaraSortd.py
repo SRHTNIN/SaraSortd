@@ -6,9 +6,9 @@ import shutil
 import time
 import toml
 
-# Version 4.0
+# Version = "5.1"
 
-ConfPath = "./Config.toml"
+ConfPath = "./GlobalConf.toml"
 
 Conf = None
 ConfVars = None
@@ -222,18 +222,18 @@ def Dir(Path, Output = True, CopyConf = True):
     os.makedirs(Path, exist_ok=True)
 
     if CopyConf:
-        NewDirConf = f"{Parse(String = ConfNames['DirConfName'], Path = ConfPath, Parent = ParentName)}.toml"
+        NewOutDirConf = f"{Parse(String = ConfNames['OutDirConfName'], Path = ConfPath, Parent = ParentName)}.toml"
         if Conf["OverwriteDirConf"] == 1 or not os.path.exists(
-            os.path.join(f"{Path}/{NewDirConf}")
+            os.path.join(f"{Path}/{NewOutDirConf}")
         ):
-            Clone("DirConfig.toml", Path, NewDirConf)
+            Clone("OutputDirConf.toml", Path, NewOutDirConf)
             UpdateConf(
-                f"{Path}/{Parse(String = ConfNames['DirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
+                f"{Path}/{Parse(String = ConfNames['OutDirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
                 "ParentDir",
                 ParentName,
             )
             UpdateConf(
-                f"{Path}/{Parse(String = ConfNames['DirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
+                f"{Path}/{Parse(String = ConfNames['OutDirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
                 "Title",
                 f"{ParentName} Config",
             )
@@ -266,13 +266,13 @@ def DecideNewPath(FilePath):
 
         ParentName = os.path.basename(Output)
 
-        DirConfName = Parse(String = ConfNames["DirConfName"], Path = ConfPath, Parent = ParentName)
-        DirConfPath = f"{Output}/{DirConfName}.toml"
+        OutDirConfName = Parse(String = ConfNames["OutDirConfName"], Path = ConfPath, Parent = ParentName)
+        OutDirConfPath = f"{Output}/{OutDirConfName}.toml"
 
-        ValidInputDirs = GetConf("ValidInputDirs", DirConfPath)
+        ValidInputDirs = GetConf("ValidInputDirs", OutDirConfPath)
 
         for ValidInputDir in ValidInputDirs:
-            ValidInputDir = Parse(String = ValidInputDir, Parent = GetConf("ParentDir", DirConfPath))
+            ValidInputDir = Parse(String = ValidInputDir, Parent = GetConf("ParentDir", OutDirConfPath))
 
             TextOutput = Parse(String = ConfLog["MatchPattern"], VarCall = f"{os.path.dirname(FilePath)} against {ValidInputDir}")
             LogWrite(TextOutput)
@@ -282,12 +282,12 @@ def DecideNewPath(FilePath):
             if (InputDirValid):
                 break
 
-        if not os.path.exists(DirConfPath) or not InputDirValid:
+        if not os.path.exists(OutDirConfPath) or not InputDirValid:
             continue
 
         OutputFiles = 0
 
-        FileLimitConf = GetConf("FileLimit", DirConfPath)
+        FileLimitConf = GetConf("FileLimit", OutDirConfPath)
 
         if FileLimitConf > 0:
             for OutputFile in os.listdir(Output):
@@ -299,7 +299,7 @@ def DecideNewPath(FilePath):
             if OutputFiles >= FileLimitConf:
                 continue
 
-        FileConf = GetConf("Files", DirConfPath)
+        FileConf = GetConf("Files", OutDirConfPath)
 
         if not FileConf:
             continue
@@ -320,25 +320,26 @@ def DecideNewPath(FilePath):
             if Match:
                 NewFileName = File["NewFileName"]
 
-                NewFileName = Parse(String = NewFileName, Path = DirConfPath, OrgFile = UnsortedFile, NextNum = File["NextNum"], NextChar = File["NextChar"], Parent = ParentName)
+                NewFileName = Parse(String = NewFileName, Path = OutDirConfPath, OrgFile = UnsortedFile, NextNum = File["NextNum"], NextChar = File["NextChar"], Parent = ParentName)
 
                 if File["Overwrite"] == 0 and os.path.exists(os.path.join(Output, NewFileName)):
                     continue
 
                 if ConfVars["NextNum"] in File["NewFileName"]:
-                    ConfData = toml.load(DirConfPath)
-
-                    NewNum = (int(File["NextNum"]) + 1)
+                    ConfData = toml.load(OutDirConfPath)
+                    Width = len(File["NextNum"])
+                    NewNum = str((int(File["NextNum"]) + 1)).rjust(Width, "0")
+                    print(File["NextNum"],"=>",NewNum)
 
                     for Item in ConfData.get("Files", []):
                         if Item.get("Pattern") == File["Pattern"]:
                             Item["NextNum"] = NewNum
                             break
 
-                    with open(DirConfPath, "w", encoding="utf-8") as ConfFile:
+                    with open(OutDirConfPath, "w", encoding="utf-8") as ConfFile:
                         toml.dump(ConfData, ConfFile)
 
-                    TextOutput = Parse(String = ConfLog["ValueSet"], VarCall = f"NextChar to {NewNum}")
+                    TextOutput = Parse(String = ConfLog["ValueSet"], VarCall = f"NextNum to {NewNum}")
                     LogWrite(TextOutput)
                     Speak(TextOutput)
 
@@ -363,14 +364,14 @@ def DecideNewPath(FilePath):
 
                     NewChar = "".join(Result)
 
-                    ConfData = toml.load(DirConfPath)
+                    ConfData = toml.load(OutDirConfPath)
 
                     for Item in ConfData.get("Files", []):
                         if Item.get("Pattern") == File["Pattern"]:
                             Item["NextChar"] = NewChar
                             break
 
-                    with open(DirConfPath, "w", encoding="utf-8") as ConfFile:
+                    with open(OutDirConfPath, "w", encoding="utf-8") as ConfFile:
                         toml.dump(ConfData, ConfFile)
 
                     TextOutput = Parse(String = ConfLog["ValueSet"], VarCall = f"NextChar to {NewChar}")
@@ -396,7 +397,7 @@ def Sort(FilePath):
     NewDirPath = os.path.dirname(NewPath)
     NewName = os.path.basename(NewPath)
 
-    if (GetConf("DeleteOrg", f"{NewDirPath}/{Parse(String = ConfNames['DirConfName'], Parent = (os.path.basename(NewDirPath)))}.toml") == 1):
+    if (GetConf("DeleteOrg", f"{NewDirPath}/{Parse(String = ConfNames['OutDirConfName'], Parent = (os.path.basename(NewDirPath)))}.toml") == 1):
         Delete = True
 
     else:
@@ -404,7 +405,7 @@ def Sort(FilePath):
 
     try:
         Clone(FilePath, NewDirPath, NewName, Delete)
-        UpdateConf(f"{NewDirPath}/{Parse(String = ConfNames['DirConfName'], Parent = os.path.basename(NewDirPath))}.toml", "LastFile", NewName)
+        UpdateConf(f"{NewDirPath}/{Parse(String = ConfNames['OutDirConfName'], Parent = os.path.basename(NewDirPath))}.toml", "LastFile", NewName)
 
         TextOutput = Parse(String = ConfLog["Sorted"], VarCall = f"{FilePath} to {NewDirPath}/{NewName}")
         LogWrite(TextOutput)
@@ -437,8 +438,8 @@ def Init():
                 Output = Parse(String = Output, Parent = os.path.basename(os.path.dirname(Output)))
                 Dir(Output)
 
-                DirConfPath = f"{Output}/{Parse(String = ConfNames["DirConfName"], Parent = os.path.basename(Output))}.toml"
-                ConfData = toml.load(DirConfPath)
+                OutDirConfPath = f"{Output}/{Parse(String = ConfNames["OutDirConfName"], Parent = os.path.basename(Output))}.toml"
+                ConfData = toml.load(OutDirConfPath)
 
                 for Item in ConfData.get("Files", []):
                     Character = re.escape(ConfVars["NextChar"])
@@ -448,7 +449,7 @@ def Init():
                     if Width > 0:
                         Item["NextChar"] = Item["NextChar"].upper().rjust(Width, "A")
 
-                with open(DirConfPath, "w", encoding = "utf-8") as ConfFile:
+                with open(OutDirConfPath, "w", encoding = "utf-8") as ConfFile:
                     toml.dump(ConfData, ConfFile)
 
             TextOutput = Parse(String = ConfLog["Start"], Path = ConfPath)
@@ -462,7 +463,7 @@ def Init():
             Speak(TextOutput)
 
     else:
-        print("NO CONFIG FOUND! Make sure the 'Config.toml' is in the same directory as 'SaraSortd.py'")
+        print("NO CONFIG FOUND! Make sure the 'GlobalConf.toml' is in the same directory as 'SaraSortd.py'")
 
 
 def Main():
@@ -509,6 +510,5 @@ def Main():
         TextOutput = GetConf("Stop", ConfPath)
         LogWrite(TextOutput)
         Speak(TextOutput)
-
 
 Init()

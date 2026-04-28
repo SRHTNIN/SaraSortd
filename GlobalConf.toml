@@ -1,5 +1,5 @@
 Title = "SaraSortd Config"
-Version = "4.0"
+Version = "5.1"
 SafeMode = 1
 SilentMode = 0
 CheckInput = 5
@@ -30,7 +30,8 @@ FailedDir = "%RootDir%/.Failed"
 
 [Names]
 LogFileName = "[y].[m].[d]"
-DirConfName = ".@Config"
+InDirConfName = ".@Config"
+OutDirConfName = ".@Config"
 FileHistoryName = ".@History"
 
 [Log]

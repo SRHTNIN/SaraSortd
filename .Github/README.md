@@ -1,16 +1,9 @@
 # SaraSortd
-(Version 4.0)
+(Version = "5.1")
 
 A python daemon that can automatically sort your files to your liking without using AI.
 
 It's made by Sarah, hence the name. :3
-
-The versioning for SaraSortd is like so: the first number going up means that your
-previous config files won't work anymore with the new SaraSortd.py.
-
-The second number going up means that something has been changed, but you can still
-use your old config files with SaraSortd.py.
-
 
 ## Usage
 
@@ -23,7 +16,6 @@ Example use-cases:
 - Sorting downloaded github repositories to a directory for your IDE.
 
 - Regularly cloning important files into a backup directory.
-
 
 ## Dependencies
 
@@ -51,12 +43,12 @@ Here's a step-by-step tutorial (in case you don't want to watch the video).
 
 ## Config explanation
 
-### SaraSortd Config (Config.toml)
+### SaraSortd Config (GlobalConf.toml)
 
 ```
-Title = "SaraSortd Config" # NOTE: Do not change the title.
+Title = "SaraSortd Config" # NOTE: Do not change the title. This is so that the program knows which config file is which.
 
-Version = "4.0" # Just the version number for the config file.
+Version = "5.1" # Just the version number for the config file.
 
 SafeMode = 1 # If SaraSortd should stop if an error with the config appears. 1 is stop, 0 is continue.
 
@@ -68,10 +60,10 @@ DotFiles = 0 # If SaraSortd should sort files that begin with ".". This is mainl
 
 Logging = 1 # If SaraSortd's logging system should be active. If this is 0, nothing will be logged into files.
 
-OverwriteDirConf = 0 # If SaraSortd should overwrite directory configs with DirConfig.toml. 0 is no, 1 is yes.
+OverwriteDirConf = 0 # If SaraSortd should overwrite directory configs with the config templates. 0 is no, 1 is yes.
 
 [Variables] # Only use these in config files, not the actual file names themselves.
-NextNum = "*" # The next available number. If 1 already exists, 2 will be used. Starts at 1.
+NextNum = "*" # The next available number. If 1 already exists, 2 will be used.
 
 NextChar = "&" # The next available character. If A already exists, B will be used.
 
@@ -139,18 +131,18 @@ Unset = "Error: %% is not set." # When a value isn't set.
 ```
 
 
-### Output Directory Config (DirConfig.toml)
+### Output Directory Config (OutputDirConf.toml)
 
-The output directory config references the SaraSortd config (Config.toml). This means that you can, for example, use the character assigned to "NextNum" in Config.toml in this config (DirConfig.toml). This applies to all Variables in the SaraSortd config (Config.toml).
+The output directory config references the SaraSortd config (GlobalConf.toml). This means that you can, for example, use the character assigned to "NextNum" in GlobalConf.toml in this config (OutputDirConf.toml). This applies to all Variables in the SaraSortd config (GlobalConf.toml).
 
 ```
-Title = "Unset" # The title of the config. This currently does nothing for SaraSortd, so it can be anything. It gets automatically updated when DirConfig.toml gets copied to an output directory.
+Title = "Unset" # NOTE: Do not change the title. This is so that the program knows which config file is which.
 
-Version = "4.0" # The version number of the config.
+Version = "5.1" # The version number of the config.
 
 LastFile = "Unset" # The last file that was sorted to this directory. It gets automatically updated whenever a file gets sorted to this directory.
 
-ParentDir = "Unset" # The name of this directory. It gets automatically updated when DirConfig.toml gets copied to an output directory.
+ParentDir = "Unset" # The name of this directory. It gets automatically updated when this config gets copied to an output directory.
 
 ValidInputDirs = ["*"] # Directories that are valid for sorting. Basically, if a file is from one of these directories, they can be sorted here. * is a wildcard; ? is a one-character wilcard. E.G: if "ValidInputDirs = ["/TestDir/*"]" any file from any directory in "/TestDir" will be allowed to be sorted here.
 
@@ -180,11 +172,21 @@ Pattern = "*" # A pattern used to sort files to this directory. * is a wildcard;
 
 NewFileName = "~^" # A pattern for the new names of the files that get sorted to this directory from matching this "Pattern".
 
-NextNum = 1 # Used to keep track of the next available number for file names. If you have two of the character that represents NextNum (Found in Config.toml), you can stack them together to make 01 or 001 instead of 1. It gets automatically incremented when NextNum is used in NewFileName, and a file gets sorted to this directory and renamed.
+NextNum = 1 # Used to keep track of the next available number for file names. If you change NextNum to be 01 or 001 instead of 1, it'll still work. 09 => 10. It gets automatically incremented when NextNum is used in NewFileName, and a file gets sorted to this directory and renamed.
 
-NextChar = "A" # Used to keep track of the next available letter for file names. It gets automatically incremented (E.G: A into B or AA into AB then AZ into BA) when NextChar is used in NewFileName, and a file gets sorted to this directory and renamed.
+NextChar = "A" # Used to keep track of the next available letter for file names. If you change NextChar to be AA or AAA instead of A, it'll still work. AZ => BA. It gets automatically incremented (E.G: A into B or AA into AB then AZ into BA) when NextChar is used in NewFileName, and a file gets sorted to this directory and renamed.
 
 CaseSensitive = 0 # Whether this "Pattern" is case-sensitive or not. 1 is yes, 0 is no. E.G: if CaseSensitive = 1 and this "Pattern" is "*.PNG", a file named "picture.png" won't get sorted to this directory. If CaseSensitive = 0 and this "Pattern" is "*.PNG", a file named "picture.png" *will* get sorted to this directory.
 
 Overwrite = 1 # Whether this specific file type can be overwritten by others of the same type. 0 is no, 1 is yes.
+```
+
+### Input Directory Config (InputDirConf.toml)
+
+```
+Title = "Unset" # NOTE: Do not change the title. This is so that the program knows which config file is which.
+
+Version = "5.1"
+
+ParentDir = "Unset" # The name of this directory. It gets automatically updated when this config gets copied to an output directory.
 ```

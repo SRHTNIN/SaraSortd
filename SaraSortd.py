@@ -6,7 +6,7 @@ import shutil
 import time
 import toml
 
-# Version = "5.1"
+# Version = "6.0"
 
 ConfPath = "./GlobalConf.toml"
 
@@ -217,26 +217,44 @@ def Clone(Source, Destination, NewName, Delete = False):
         os.remove(Source)
 
 
-def Dir(Path, Output = True, CopyConf = True):
+def Dir(Path, Output = True, CopyConf = "OutputDirConf.toml"):
     ParentName = os.path.basename(Path)
     os.makedirs(Path, exist_ok=True)
 
     if CopyConf:
-        NewOutDirConf = f"{Parse(String = ConfNames['OutDirConfName'], Path = ConfPath, Parent = ParentName)}.toml"
-        if Conf["OverwriteDirConf"] == 1 or not os.path.exists(
-            os.path.join(f"{Path}/{NewOutDirConf}")
-        ):
-            Clone("OutputDirConf.toml", Path, NewOutDirConf)
-            UpdateConf(
-                f"{Path}/{Parse(String = ConfNames['OutDirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
-                "ParentDir",
-                ParentName,
-            )
-            UpdateConf(
-                f"{Path}/{Parse(String = ConfNames['OutDirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
-                "Title",
-                f"{ParentName} Config",
-            )
+        if "Out" in CopyConf:
+            NewDirConf = f"{Parse(String = ConfNames['OutDirConfName'], Path = ConfPath, Parent = ParentName)}.toml"
+
+            if Conf["OverwriteDirConf"] == 1 or not os.path.exists(os.path.join(f"{Path}/{NewDirConf}")):
+                Clone(CopyConf, Path, NewDirConf)
+                UpdateConf(
+                    f"{Path}/{Parse(String = ConfNames['OutDirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
+                    "ParentDir",
+                    ParentName,
+                )
+
+                UpdateConf(
+                    f"{Path}/{Parse(String = ConfNames['OutDirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
+                    "Title",
+                    f"{ParentName} Config",
+                )
+
+        if "In" in CopyConf:
+            NewDirConf = f"{Parse(String = ConfNames['InDirConfName'], Path = ConfPath, Parent = ParentName)}.toml"
+
+            if Conf["OverwriteDirConf"] == 1 or not os.path.exists(os.path.join(f"{Path}/{NewDirConf}")):
+                Clone(CopyConf, Path, NewDirConf)
+                UpdateConf(
+                    f"{Path}/{Parse(String = ConfNames['InDirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
+                    "ParentDir",
+                    ParentName,
+                )
+
+                UpdateConf(
+                    f"{Path}/{Parse(String = ConfNames['InDirConfName'], Path = ConfPath, Parent = ParentName)}.toml",
+                    "Title",
+                    f"{ParentName} Config",
+                )
 
     if Output:
         ParsedPath = Parse(String = Path)
@@ -432,7 +450,7 @@ def Init():
         if Start:
             for InputDir in ConfDirs["InputDir"]:
                 InputDir = Parse(String = InputDir, Path = ConfPath, Parent = os.path.basename(os.path.dirname(InputDir)))
-                Dir(InputDir, Output = False, CopyConf = False)
+                Dir(InputDir, Output = False, CopyConf = "InputDirConf.toml")
 
             for Output in ConfDirs["OutputDir"]:
                 Output = Parse(String = Output, Parent = os.path.basename(os.path.dirname(Output)))
@@ -477,6 +495,9 @@ def Main():
                 if not os.path.exists(InputPath):
                     continue
 
+                InputDirConfPath = f"{InputPath}/{Parse(ConfNames["InDirConfName"], Parent = os.path.basename(InputPath))}.toml"
+                InputDirConf = toml.load(InputDirConfPath)
+
                 for Output in ConfDirs["OutputDir"]:
                     OutputPath = Parse(Output)
 
@@ -490,11 +511,41 @@ def Main():
 
                 for FileName in os.listdir(InputPath):
                     FilePath = f"{InputPath}/{FileName}"
+                    if os.path.isdir(FilePath) and InputDirConf["SortDirs"] == 0:
+                        continue
 
-                    if os.path.isfile(FilePath):
-                        FileName = os.path.basename(FilePath)
-                        if FileName.startswith(".") and Conf["DotFiles"] == 0:
-                            continue
+                    FileName = os.path.basename(FilePath)
+                    if FileName.startswith(".") and Conf["DotFiles"] == 0:
+                        continue
+
+                    for ConfFile in InputDirConf["Files"]:
+                        if ConfFile["CaseSensitive"] == 1:
+                            Match = fnmatch.fnmatchcase(FileName, Parse(ConfFile["Pattern"], Parent = os.path.basename(InputPath)))
+
+                        else:
+                            Match = fnmatch.fnmatchcase(FileName.lower(), (Parse(ConfFile["Pattern"], Parent = os.path.basename(InputPath))).lower())
+
+                        if Match:
+                            break
+
+                    if Match:
+                        if os.path.isdir(FilePath) and InputDirConf["SortDirs"] == 1:
+                            TextOutput = Parse(String = ConfLog["Zipping"], VarCall = FilePath)
+                            LogWrite(TextOutput)
+                            Speak(TextOutput)
+
+                            shutil.make_archive(FilePath, "zip", FilePath)
+
+                            try:
+                                os.rmdir(FilePath)
+
+                            except PermissionError:
+                                TextOutput = Parse(String = ConfLog["NoPermission"], VarCall = f"remove directory {InputPath}/{FileName}")
+                                LogWrite(TextOutput)
+                                Speak(TextOutput)
+                                continue
+
+                            FilePath = f"{FilePath}.zip"
 
                         if RecurseDir:
                             HistoryFile = toml.load(FileHistoryPath)

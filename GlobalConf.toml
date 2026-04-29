@@ -1,5 +1,5 @@
 Title = "SaraSortd Config"
-Version = "5.1"
+Version = "6.0"
 SafeMode = 1
 SilentMode = 0
 CheckInput = 5
@@ -22,7 +22,7 @@ Second = "[s]"
 VarCall = "%%"
 
 [DirectoryPaths]
-RootDir = "Unset"
+RootDir = "C:/Users/StigOscarAadalen-Aas/OneDrive - Telemark fylkeskommune/Desktop/Testdir"
 InputDir = [ "%RootDir%/Input" ]
 OutputDir = [ "%RootDir%/Output" ]
 LogDir = "%RootDir%/.Logs"
@@ -44,3 +44,6 @@ Sorted = "Sorted %%."
 NotSorted = "Error: Failed to sort %%. No valid output directory."
 ValueSet = "Set %%."
 Unset = "Error: %% is not set."
+Zipping = "Zipping: %%."
+Unzipping = "Unzipping: %%."
+NoPermission = "Error: No permission to %%."

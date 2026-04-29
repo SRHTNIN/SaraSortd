@@ -1,5 +1,5 @@
 # SaraSortd
-(Version = "5.1")
+(Version = "6.0")
 
 A python daemon that can automatically sort your files to your liking without using AI.
 
@@ -48,7 +48,7 @@ Here's a step-by-step tutorial (in case you don't want to watch the video).
 ```
 Title = "SaraSortd Config" # NOTE: Do not change the title. This is so that the program knows which config file is which.
 
-Version = "5.1" # Just the version number for the config file.
+Version = "6.0" # Just the version number for the config file.
 
 SafeMode = 1 # If SaraSortd should stop if an error with the config appears. 1 is stop, 0 is continue.
 
@@ -128,6 +128,15 @@ ValueSet = "Set: %%." # When a value in a config is set.
 
 Unset = "Error: %% is not set." # When a value isn't set.
 # %% here is just the parameter who's value was either "Unset" or None. E.G: "RootDir".
+
+Zipping = "Zipping: %%." # When a directory is zipped.
+# %% here is the path to the directory being zipped.
+
+Unzipping = "Unzipping: %%." # When a directory gets unzipped.
+# %% is the path to the directory being unzipped.
+
+NoPermission = "Error: No permission to %%." # When SaraSortd lacks permission to do something.
+# %% is the action that the program had no permission to do. E.G. "remove directory  /home/bob/exampledir".
 ```
 
 
@@ -138,7 +147,7 @@ The output directory config references the SaraSortd config (GlobalConf.toml). T
 ```
 Title = "Unset" # NOTE: Do not change the title. This is so that the program knows which config file is which.
 
-Version = "5.1" # The version number of the config.
+Version = "6.0" # The version number of the config.
 
 LastFile = "Unset" # The last file that was sorted to this directory. It gets automatically updated whenever a file gets sorted to this directory.
 
@@ -186,7 +195,15 @@ Overwrite = 1 # Whether this specific file type can be overwritten by others of 
 ```
 Title = "Unset" # NOTE: Do not change the title. This is so that the program knows which config file is which.
 
-Version = "5.1"
+Version = "6.0"
 
 ParentDir = "Unset" # The name of this directory. It gets automatically updated when this config gets copied to an output directory.
+
+SortDirs = 0
+
+[[Files]] # The double brackets means that you can add multiple types of files to be sorted here. Just copy [[Files]] and all the parameters under it, and paste it under or over this section, then you may change the values of the new parameters.
+
+Pattern = "*" # A pattern used to decide if a file should be sorted or not. * is a wildcard; ? is a one-character wildcard. E.G: if Pattern is "*.png", all files ending with .png in this directory will try to be sorted.
+
+CaseSensitive = 0 # Whether Pattern is case-sensitive or not. If CaseSensitive = 1 and your pattern is "*.PNG", then a file named "example.png" won't be sorted.
 ```
